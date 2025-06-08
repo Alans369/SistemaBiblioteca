@@ -19,7 +19,7 @@ GO
 -- ### Tabla Libros
 -- Almacena la información principal de cada libro con los campos simplificados
 CREATE TABLE Libros (
-        LibroID INT PRIMARY KEY IDENTITY(1,1), -- ID único para cada libro, auto-incremental
+        ID INT PRIMARY KEY IDENTITY(1,1), -- ID único para cada libro, auto-incremental
         Titulo NVARCHAR(200) NOT NULL, -- Título del libro
         Autor NVARCHAR(150) NOT NULL, -- Autor del libro
         ImagenURL NVARCHAR(500), -- URL o ruta a la imagen de la portada del libro

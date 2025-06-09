@@ -17,12 +17,12 @@ public class ConnectionManager {
      * - user=dev : Nombre de usuario para la autenticación.
      * - password=dev : Contraseña para la autenticación.
      */
-    private static final String STR_CONNECTION = "jdbc:sqlserver://DESKTOP-CC30LNJ; " +
-            "encrypt=true; " +
-            "database=Biblioteca; " +
-            "trustServerCertificate=true;" +
-            "user=java;" +
-            "password=12345";
+    private static final String STR_CONNECTION = "jdbc:sqlserver://SystemBiblioteca.mssql.somee.com;" +
+            "database=SystemBiblioteca;" +
+            "user=ackerman_SQLLogin_1;" +
+            "password=5p9ibs3bha;" +
+            "encrypt=true;" +
+            "trustServerCertificate=true;";
 
     /**
      * Representa la conexión activa a la base de datos. Inicialmente es nula.

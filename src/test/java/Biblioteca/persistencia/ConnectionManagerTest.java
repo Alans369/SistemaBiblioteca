@@ -49,7 +49,7 @@ class ConnectionManagerTest {
     }
 
 
-
-
-
+    @Test
+    void testConnect() {
+    }
 }

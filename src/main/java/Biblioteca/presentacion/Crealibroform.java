@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.awt.Image; // <-- ¡Añade esta línea!
+import java.awt.Dimension;
 
 public class Crealibroform extends JFrame {
     private JPanel mainpanel;
@@ -31,7 +32,9 @@ public class Crealibroform extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al cerrar la ventana
         setLocationRelativeTo(null); // Centra la ventana en la pantalla
         setVisible(true); // Hace visible la ventan
+        imagen.setPreferredSize(new Dimension(500, 300));
         btnImagen.addActionListener(e -> selectImage());
+
 
 
 
@@ -75,8 +78,8 @@ public class Crealibroform extends JFrame {
 
                         // Si el label aún no tiene dimensiones (ej. al inicio), usa las preferidas o un valor predeterminado
                         if (labelWidth == 0 || labelHeight == 0) {
-                            labelWidth = imagen.getPreferredSize().width > 0 ? imagen.getPreferredSize().width : 500;
-                            labelHeight = imagen.getPreferredSize().height > 0 ? imagen.getPreferredSize().height : 400;
+                            labelWidth = imagen.getPreferredSize().width > 0 ? imagen.getPreferredSize().width : 5100;
+                            labelHeight = imagen.getPreferredSize().height > 0 ? imagen.getPreferredSize().height : 4400;
                         }
 
                         // Asegúrate de que las dimensiones no sean 0 para evitar errores
@@ -125,7 +128,6 @@ public class Crealibroform extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new Crealibroform();
-            ff
         });
     }
 

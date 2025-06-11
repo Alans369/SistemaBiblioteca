@@ -21,8 +21,6 @@ public class Crealibroform extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al cerrar la ventana
         setLocationRelativeTo(null); // Centra la ventana en la pantalla
         setVisible(true); // Hace visible la ventana
-
-        System.out.print(txtTitulo.getText());
     }
 
 

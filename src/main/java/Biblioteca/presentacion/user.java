@@ -1,12 +1,13 @@
 package Biblioteca.presentacion;
 
-import Biblioteca.persistencia.ConnectionManager;
+// Importa tu UserDAO si aún lo estás usando
+import Biblioteca.persistencia.UserDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
+import java.util.Map; // Para el tipo de retorno de UserDAO
 
 public class user {
     public JPanel panelMain;
@@ -17,8 +18,15 @@ public class user {
     private JButton logginbutton;
     private JLabel email; // Se mantiene por si lo usas en el .form, no en la lógica de login
     private JTextField textField; // Se mantiene por si lo usas en el .form, no en la lógica de login
+    private JButton registerButton; // ¡Este es el botón de registro!
+
+    // Instancia del UserDAO (el que devuelve Map<String, Object>)
+    private UserDAO UserDAO; // ¡Usa UserDAO si este es el que estás utilizando!
 
     public user() {
+        // Inicializamos el UserDAO
+        this.UserDAO = new UserDAO();
+
         // --- Lógica del botón de LOGIN (logginbutton) ---
         logginbutton.addActionListener(new ActionListener() {
             @Override
@@ -31,47 +39,31 @@ public class user {
                     return;
                 }
 
-                Connection conn = null;
-                PreparedStatement stmt = null;
-                ResultSet rs = null;
-                int loggedInUserId = -1; // Para almacenar el ID del usuario logueado
-                String hashedPasswordFromDB = null;
+                Map<String, Object> usuarioLogueadoData = null; // Para almacenar los datos del usuario como un Map
 
                 try {
-                    conn = ConnectionManager.getInstance().connect();
+                    // Llama al método del DAO para obtener el usuario por su nombre de usuario
+                    usuarioLogueadoData = UserDAO.obtenerUsuarioPorNombre(username);
 
-                    // Consulta SQL: SELECCIONA UsuarioID y Contrasena de la tabla Usuarios
-                    String sql = "SELECT UsuarioID, Contrasena FROM Usuarios WHERE NombreUsuario = ?";
-                    stmt = conn.prepareStatement(sql);
-                    stmt.setString(1, username);
-                    rs = stmt.executeQuery();
-
-                    if (rs.next()) {
-                        loggedInUserId = rs.getInt("UsuarioID"); // Obtiene el UsuarioID
-                        hashedPasswordFromDB = rs.getString("Contrasena");
-                    }
-
-                } catch (SQLException ex) {
+                } catch (Exception ex) { // Capturamos cualquier excepción que pueda surgir
                     JOptionPane.showMessageDialog(panelMain,
-                            "Error al conectar con la base de datos o al ejecutar la consulta: " + ex.getMessage(),
+                            "Error al buscar usuario en la base de datos: " + ex.getMessage(),
                             "Error de Base de Datos",
                             JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace(); // Imprime la traza completa del error en la consola
+                    ex.printStackTrace();
                     return;
-                } finally {
-                    // Asegura que los recursos de la base de datos se cierren
-                    try {
-                        if (rs != null) rs.close();
-                        if (stmt != null) stmt.close();
-                        if (conn != null) conn.close();
-                    } catch (SQLException ex) {
-                        System.err.println("Error al cerrar los recursos de la base de datos: " + ex.getMessage());
-                        ex.printStackTrace();
-                    }
+                }
+
+                String hashedPasswordFromDB = null;
+                // Verificamos si se encontró un usuario antes de intentar obtener la contraseña
+                if (usuarioLogueadoData != null) {
+                    hashedPasswordFromDB = (String) usuarioLogueadoData.get("Contrasena");
                 }
 
                 // --- Lógica de Verificación de Contraseña y Redirección a VistaEjemplo ---
-                if (hashedPasswordFromDB != null && BCrypt.checkpw(enteredPassword, hashedPasswordFromDB)) {
+                // Verifica que se encontró un usuario y que la contraseña hash no es nula,
+                // y luego compara las contraseñas.
+                if (usuarioLogueadoData != null && hashedPasswordFromDB != null && BCrypt.checkpw(enteredPassword, hashedPasswordFromDB)) {
                     JOptionPane.showMessageDialog(panelMain,
                             "¡Inicio de sesión exitoso, " + username + "!",
                             "Acceso Concedido",
@@ -80,8 +72,21 @@ public class user {
                     // Cierra la ventana actual de login
                     ((JFrame) SwingUtilities.getWindowAncestor(panelMain)).dispose();
 
-                    // ¡REDirecciona a la VISTA DE EJEMPLO, pasando el ID real del usuario!
-                    VistaEjemplo exampleView = new VistaEjemplo(loggedInUserId);
+                    // ¡NUEVAS VERIFICACIONES DE NULIDAD AQUÍ!
+                    Integer loggedInUserId = (Integer) usuarioLogueadoData.get("UsuarioID");
+                    String loggedInUserRole = (String) usuarioLogueadoData.get("Rol");
+
+                    if (loggedInUserId == null || loggedInUserRole == null) {
+                        JOptionPane.showMessageDialog(panelMain,
+                                "Error: Datos de usuario incompletos (ID o Rol nulo). Contacte al administrador.",
+                                "Error de Datos",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Pasa el ID y el ROL del objeto Usuario a VistaEjemplo!
+                    // La llamada a .intValue() ahora es segura porque loggedInUserId no es nulo.
+                    VistaEjemplo exampleView = new VistaEjemplo(loggedInUserId.intValue(), loggedInUserRole);
                     exampleView.setVisible(true);
 
                 } else {
@@ -90,6 +95,32 @@ public class user {
                             "Acceso Denegado",
                             JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+
+        // --- Lógica del botón de REGISTRO (registerButton) ---
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Cierra la ventana actual de login
+                ((JFrame) SwingUtilities.getWindowAncestor(panelMain)).dispose();
+
+                // Abre la nueva ventana de registro (user_registration)
+                SwingUtilities.invokeLater(() -> {
+                    JFrame registrationFrame = new JFrame("Registro de Usuario");
+                    // Asegúrate de que user_registration tenga un panel principal o sea un JFrame directamente
+                    // Si user_registration es un JPanel:
+                    user_registration registrationPanel = new user_registration();
+                    registrationFrame.setContentPane(registrationPanel.panelMain); // Ajusta si el panel se llama diferente
+
+                    // Si user_registration es un JFrame directamente (es decir, extiende JFrame):
+                    // user_registration registrationFrame = new user_registration();
+
+                    registrationFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Solo cierra esta ventana
+                    registrationFrame.setSize(500, 400); // Ajusta el tamaño según tu formulario de registro
+                    registrationFrame.setLocationRelativeTo(null); // Centra la ventana
+                    registrationFrame.setVisible(true);
+                });
             }
         });
     }

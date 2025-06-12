@@ -90,7 +90,7 @@ public class LibroDAO {
                 // Mover el cursor al primer resultado (si existe).
                 if (generatedKeys.next()) {
                     // Obtener el ID generado. Generalmente la primera columna contiene la clave primaria.
-                    System.out.print("id generado " + generatedKeys.getInt(1));
+
                     int idGenerado= generatedKeys.getInt(1);
 
                     // Recuperar el usuario completo utilizando el ID generado.

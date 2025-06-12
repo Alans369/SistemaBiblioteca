@@ -122,7 +122,6 @@ public class LibroDAO {
                             "WHERE ID = ?"
             );
 
-            System.out.println("en actualizar "+libro.getTitulo());
 
             ps.setString(1,libro.getTitulo());
             ps.setString(2,libro.getAutor());

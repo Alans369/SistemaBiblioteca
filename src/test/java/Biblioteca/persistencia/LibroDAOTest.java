@@ -99,6 +99,21 @@ class LibroDAOTest {
         assertFalse(libros.isEmpty(), "La búsqueda no debería haber devuelto una lista vacía para el término: " + libro.getTitulo());
     }
 
+    private void delete(Libro libro) throws SQLException{
+        // Llama al método 'delete' del UserDAO para eliminar un usuario por su ID.
+        boolean res = libroDAO.delete(libro);
+
+        // Realiza una aserción para verificar que la eliminación fue exitosa.
+        assertTrue(res, "La eliminación del usuario debería ser exitosa.");
+
+        // Intenta obtener el usuario por su ID después de la eliminación.
+        Libro res2 = libroDAO.getById(libro.getId());
+
+        // Realiza una aserción para verificar que el usuario ya no existe en la base de datos
+        // después de la eliminación (el método 'getById' debería retornar null).
+        assertNull(res2, "El usuario debería haber sido eliminado y no encontrado por ID.");
+    }
+
 
     @Test
     void testLibro() throws SQLException {
@@ -117,6 +132,8 @@ class LibroDAOTest {
         getLibroById(librotest);
 
         searchLibroByTitulo(librotest);
+
+        delete(librotest);
 
 
 

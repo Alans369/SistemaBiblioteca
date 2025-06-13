@@ -58,5 +58,18 @@ public class Libro {
 
     public void setCategoriaId(int categoriaId) {this.categoriaId = categoriaId;}
 
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", imagenR='" + imagenR + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", rutaPdf='" + rutapdf + '\'' +
+                ", categoriaId=" + categoriaId +
+                '}';
+    }
+
 
 }

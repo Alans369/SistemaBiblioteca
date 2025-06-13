@@ -28,20 +28,12 @@ public class libroformC extends JDialog {
     private JButton crearButton;
     private JButton cancelarButton;
     private JLabel imagenurl;
-    private String rutaImagenCargada;
-
     // --- NUEVAS VARIABLES PARA PDF ---
     private String rutaPdfTemporal;    // ALMACENA LA RUTA ORIGINAL DEL PDF SELECCIONADO (NO COPIADO AÚN)
-    private String rutaPdfCargado;     // ALMACENA LA RUTA FINAL DEL PDF EN 'resources' DESPUÉS DE COPIARLO
-    // --- FIN NUEVAS VARIABLES PDF ---
 
     private String rutaImagenTemporal; // ALMACENA LA RUTA ORIGINAL DE LA IMAGEN SELECCIONADA (NO COPIADA AÚN)
     // ALMACENA LA RUTA FINAL DE LA IMAGEN EN 'resources' DESPUÉS DE COPIARLA
-
-
     // Define las dimensiones máximas para la imagen escalada en la vista previa
-
-
 
     public libroformC(Mainform mainForm){
         super(mainForm, "Crear libro ", true); // true para modal
@@ -107,7 +99,6 @@ public class libroformC extends JDialog {
 
     } // Cierra solo el diálogo
 
-
     public void CraerLibro() {
 
         try{
@@ -127,7 +118,6 @@ public class libroformC extends JDialog {
 
 
     }
-
 
     private void mostrarImagenEnLabel(String imagePath) {
         if (imagePath == null || imagePath.isEmpty()) {

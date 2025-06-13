@@ -118,7 +118,6 @@ public class libroformC extends JDialog {
             libro.setDescripcion(txtdecripcion.getText());
             libro.setRutaPdf(copiarArchivo(rutaPdfTemporal,"pdfs"));
             libro.setCategoriaId(categoriaId);
-
             System.out.println(libro);
 
         }catch (IOException ex) {

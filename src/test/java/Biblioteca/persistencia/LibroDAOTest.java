@@ -2,6 +2,7 @@ package Biblioteca.persistencia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import Biblioteca.dominio.Libro;
+import Biblioteca.dominio.Categoria;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;              // Clase para crear listas dinámicas de objetos, utilizada en algunas pruebas.
@@ -118,7 +119,7 @@ class LibroDAOTest {
     @Test
     void testLibro() throws SQLException {
 
-        Random random = new Random();
+       Random random = new Random();
         // Genera un número aleatorio entre 1 y 1000 para asegurar la unicidad del email en cada prueba.
         int num = random.nextInt(1000) + 1;
         // Define una cadena base para el email y le concatena el número aleatorio generado.
@@ -134,6 +135,8 @@ class LibroDAOTest {
         searchLibroByTitulo(librotest);
 
         delete(librotest);
+
+
 
 
 

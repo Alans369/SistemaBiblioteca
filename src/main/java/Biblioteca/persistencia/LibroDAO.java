@@ -6,6 +6,7 @@ import java.sql.SQLException;     // Clase para manejar errores relacionados con
 import java.util.ArrayList;
 
 import Biblioteca.dominio.Libro;
+import Biblioteca.dominio.Categoria;
 
 public class LibroDAO {
     private ConnectionManager conn; // Objeto para gestionar la conexión con la base de datos.
@@ -226,12 +227,12 @@ public class LibroDAO {
         return records; // Retornar la lista de usuarios encontrados
     }
 
-    public ArrayList<Libro> select() throws SQLException{
-        ArrayList<Libro> records  = new ArrayList<>();
+    public  ArrayList<Categoria> selectCategoria() throws SQLException{
+        ArrayList<Categoria> records  = new ArrayList<>();
 
         try {
             // Preparar la sentencia SQL para buscar usuarios por nombre (usando LIKE para búsqueda parcial).
-            ps = conn.connect().prepareStatement("SELECT TOP 2 * FROM Productos");
+            ps = conn.connect().prepareStatement("SELECT * FROM Categorias");
 
             // Ejecutar la consulta SQL y obtener el resultado.
             rs = ps.executeQuery();
@@ -239,19 +240,12 @@ public class LibroDAO {
             // Iterar a través de cada fila del resultado.
             while (rs.next()){
                 // Crear un nuevo objeto User para cada registro encontrado.
-                Libro libro = new Libro();
+                Categoria cat = new Categoria();
                 // Asignar los valores de las columnas a los atributos del objeto User.
-                libro.setId(rs.getInt(1));       // Obtener el ID del usuario.
-                libro.setTitulo(rs.getString(2));   // Obtener el nombre del usuario.
-                libro.setAutor(rs.getString(3));  // Obtener el correo electrónico del usuario.
-                libro.setImagenR(rs.getString(4));
-                libro.setDescripcion((rs.getString(5)));
-                libro.setRutaPdf((rs.getString(6)));
-
-                libro.setCategoriaId(rs.getInt(7));
-                // Obtener el estado del usuario.
-                // Agregar el objeto User a la lista de resultados.
-                records.add(libro);
+                cat.setCategoriaID(rs.getInt(1));       // Obtener el ID del usuario.
+                cat.setNombreCategoria(rs.getString(2));   // Obtener el nombre del usuario.
+                cat.setDescripcion(rs.getString(3));  // Obtener el correo electrónico del usuario.
+                records.add(cat);
             }
             ps.close(); // Cerrar la sentencia preparada para liberar recursos.
             rs.close(); // Cerrar el conjunto de resultados para liberar recursos.
@@ -267,6 +261,7 @@ public class LibroDAO {
         return records; // Retornar la lista de usuarios encontrados
 
     }
+
 
 
 

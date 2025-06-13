@@ -41,4 +41,10 @@ public class Categoria {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+    @Override
+    public String toString() {
+        // Esto es lo que se mostrará en el JComboBox
+        return nombreCategoria;
+    }
 }

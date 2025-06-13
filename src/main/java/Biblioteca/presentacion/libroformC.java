@@ -13,13 +13,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import Biblioteca.dominio.Libro;
+import Biblioteca.dominio.Categoria;
+
+import Biblioteca.persistencia.LibroDAO;
 
 
 
 public class libroformC extends JDialog {
     private JPanel libropanel;
     private JTextField txtdecripcion;
-    private JComboBox boxcategoria;
+    private JComboBox<Categoria> boxcategoria;
     private JButton btnlibro;
     private JTextField txtTitulo;
     private JTextField txtautor;
@@ -30,7 +33,7 @@ public class libroformC extends JDialog {
     private JLabel imagenurl;
     // --- NUEVAS VARIABLES PARA PDF ---
     private String rutaPdfTemporal;    // ALMACENA LA RUTA ORIGINAL DEL PDF SELECCIONADO (NO COPIADO AÚN)
-
+    private LibroDAO libroDAO;
     private String rutaImagenTemporal; // ALMACENA LA RUTA ORIGINAL DE LA IMAGEN SELECCIONADA (NO COPIADA AÚN)
     // ALMACENA LA RUTA FINAL DE LA IMAGEN EN 'resources' DESPUÉS DE COPIARLA
     // Define las dimensiones máximas para la imagen escalada en la vista previa
@@ -41,6 +44,7 @@ public class libroformC extends JDialog {
         setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         button1.setText("nombre de pdf cargado aca ");
+        cargarCategoriasEnComboBox();
         add(libropanel);
 
 
@@ -101,13 +105,19 @@ public class libroformC extends JDialog {
 
     public void CraerLibro() {
 
+
+
         try{
+            Categoria categoriaSeleccionada = (Categoria) boxcategoria.getSelectedItem();
+            int categoriaId = categoriaSeleccionada.getCategoriaID();
+
             Libro libro = new Libro();
             libro.setTitulo(txtTitulo.getText());
             libro.setAutor(txtautor.getText());
             libro.setImagenR(copiarArchivo(rutaImagenTemporal,"images"));
             libro.setDescripcion(txtdecripcion.getText());
             libro.setRutaPdf(copiarArchivo(rutaPdfTemporal,"pdfs"));
+            libro.setCategoriaId(categoriaId);
 
             System.out.println(libro);
 
@@ -208,6 +218,33 @@ public class libroformC extends JDialog {
         } catch (IOException e) {
             System.err.println("Error al copiar el archivo: " + e.getMessage());
             throw e;
+        }
+    }
+
+    private void cargarCategoriasEnComboBox() {
+        // Limpiar el ComboBox antes de añadir nuevos ítems
+        boxcategoria.removeAllItems();
+        libroDAO = new LibroDAO();
+
+        try {
+            // Suponiendo que tienes una instancia de tu clase de persistencia (ej. CategoriaDAO)
+            // Necesitas instanciar tu CategoriaDAO aquí
+            // Por ejemplo:
+            // CategoriaDAO categoriaDAO = new CategoriaDAO();
+            // ArrayList<Categoria> categorias = categoriaDAO.selectCategoria();
+
+            // Para este ejemplo, simulemos algunas categorías si no tienes el DAO configurado aún
+
+            // Añadir los objetos Categoria al JComboBox
+            for (Categoria cat : libroDAO.selectCategoria()) {
+                boxcategoria.addItem(cat);
+            }
+
+
+        } catch (Exception ex) { // Captura SQLException o cualquier otra excepción del DAO
+            System.err.println("Error al cargar las categorías en el ComboBox: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

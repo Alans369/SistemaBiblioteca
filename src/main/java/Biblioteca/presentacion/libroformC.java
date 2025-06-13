@@ -14,6 +14,8 @@ import java.nio.file.StandardCopyOption;
 
 import Biblioteca.dominio.Libro;
 
+
+
 public class libroformC extends JDialog {
     private JPanel libropanel;
     private JTextField txtdecripcion;
@@ -28,6 +30,11 @@ public class libroformC extends JDialog {
     private JLabel imagenurl;
     private String rutaImagenCargada;
 
+    // --- NUEVAS VARIABLES PARA PDF ---
+    private String rutaPdfTemporal;    // ALMACENA LA RUTA ORIGINAL DEL PDF SELECCIONADO (NO COPIADO AÚN)
+    private String rutaPdfCargado;     // ALMACENA LA RUTA FINAL DEL PDF EN 'resources' DESPUÉS DE COPIARLO
+    // --- FIN NUEVAS VARIABLES PDF ---
+
     private String rutaImagenTemporal; // ALMACENA LA RUTA ORIGINAL DE LA IMAGEN SELECCIONADA (NO COPIADA AÚN)
     // ALMACENA LA RUTA FINAL DE LA IMAGEN EN 'resources' DESPUÉS DE COPIARLA
 
@@ -41,7 +48,9 @@ public class libroformC extends JDialog {
         setSize(700, 700);
         setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        button1.setText("nombre de pdf cargado aca ");
         add(libropanel);
+
 
         // Add action listener to btnimagen
         // ACCIÓN PARA EL BOTÓN "SELECCIONAR IMAGEN" (btnimagen)
@@ -51,7 +60,7 @@ public class libroformC extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Llama al método para seleccionar la imagen
-                String tempPath = seleccionarImagen();
+                String tempPath = seleccionarArchivo(new FileNameExtensionFilter("Archivos de Imagen", "jpg", "jpeg", "png", "gif", "bmp"));
                 if (tempPath != null) {
                     rutaImagenTemporal = tempPath; // Guarda la ruta temporal
                     try {
@@ -74,6 +83,26 @@ public class libroformC extends JDialog {
             }
         });
 
+        // =========================================================================
+        // ACCIÓN PARA EL BOTÓN "SELECCIONAR PDF" (btnSeleccionarPdf)
+        // =========================================================================
+        btnlibro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Llama a una versión genérica de seleccionarArchivo, filtrando solo PDFs
+                String tempPath = seleccionarArchivo(new FileNameExtensionFilter("Archivos PDF", "pdf"));
+                if (tempPath != null) {
+                    rutaPdfTemporal = tempPath; // Guarda la ruta temporal del PDF
+                    File pdfFile = new File(rutaPdfTemporal);
+                    button1.setText("PDF Seleccionado: " + pdfFile.getName()); // Muestra solo el nombre
+                    JOptionPane.showMessageDialog(libroformC.this, "PDF seleccionado temporalmente: " + pdfFile.getName());
+                } else {
+                    rutaPdfTemporal = null; // Si el usuario cancela, limpia la ruta
+                    button1.setText("PDF Seleccionado: Ninguno"); // Restablece el texto
+                }
+            }
+        });
+
         crearButton.addActionListener(e-> CraerLibro());
 
     } // Cierra solo el diálogo
@@ -85,9 +114,9 @@ public class libroformC extends JDialog {
             Libro libro = new Libro();
             libro.setTitulo(txtTitulo.getText());
             libro.setAutor(txtautor.getText());
-            libro.setImagenR(cargarImagen(rutaImagenTemporal));
-
+            libro.setImagenR(copiarArchivo(rutaImagenTemporal,"images"));
             libro.setDescripcion(txtdecripcion.getText());
+            libro.setRutaPdf(copiarArchivo(rutaPdfTemporal,"pdfs"));
 
             System.out.println(libro);
 
@@ -139,24 +168,19 @@ public class libroformC extends JDialog {
         }
     }
 
-    private String seleccionarImagen() {
+    private String seleccionarArchivo(FileNameExtensionFilter filter) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Seleccionar Imagen");
-
-        FileNameExtensionFilter imageFilter = new FileNameExtensionFilter(
-                "Archivos de Imagen", "jpg", "jpeg", "png", "gif", "bmp");
-        fileChooser.setFileFilter(imageFilter);
-
+        fileChooser.setDialogTitle("Seleccionar Archivo");
+        fileChooser.setFileFilter(filter);
         int userSelection = fileChooser.showOpenDialog(this);
-
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             return selectedFile.getAbsolutePath();
         }
-        return null; // User cancelled
+        return null;
     }
 
-    private String cargarImagen(String sourcePath) throws IOException {
+    private String copiarArchivo(String sourcePath, String subfolder) throws IOException {
         if (sourcePath == null || sourcePath.isEmpty()) {
             return null;
         }
@@ -167,10 +191,11 @@ public class libroformC extends JDialog {
             return null;
         }
 
-        Path resourceDirPath = Paths.get("src", "main", "resources", "images"); // Sugerencia: subcarpeta 'images'
+        // Ruta a la subcarpeta dentro de 'resources'
+        Path resourceDirPath = Paths.get("src", "main", "resources", subfolder);
         if (!Files.exists(resourceDirPath)) {
             Files.createDirectories(resourceDirPath);
-            System.out.println("Carpeta de recursos para imágenes creada: " + resourceDirPath.toAbsolutePath());
+            System.out.println("Carpeta de recursos creada: " + resourceDirPath.toAbsolutePath());
         }
 
         // Generar un nombre de archivo único para evitar sobrescribir
@@ -187,8 +212,8 @@ public class libroformC extends JDialog {
         Path destinationPath = resourceDirPath.resolve(uniqueFileName);
 
         try {
-            Files.copy(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING); // Omitir REPLACE_EXISTING si siempre quieres nombres únicos
-            System.out.println("Imagen copiada a: " + destinationPath.toAbsolutePath());
+            Files.copy(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Archivo copiado a: " + destinationPath.toAbsolutePath());
             return destinationPath.toAbsolutePath().toString();
         } catch (IOException e) {
             System.err.println("Error al copiar el archivo: " + e.getMessage());

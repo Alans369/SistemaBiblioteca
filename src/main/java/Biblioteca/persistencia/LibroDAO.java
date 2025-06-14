@@ -17,6 +17,46 @@ public class LibroDAO {
         conn = ConnectionManager.getInstance();
     }
 
+    public Categoria getByIdC(int id) throws SQLException{
+        Categoria cat  = new Categoria(); // Inicializar un objeto User que se retornará.
+
+        try {
+            // Preparar la sentencia SQL para seleccionar un usuario por su ID.
+            ps = conn.connect().prepareStatement("SELECT * " +
+                    "FROM Categorias " +
+                    "WHERE CategoriaID  = ?");
+
+
+            // Establecer el valor del parámetro en la sentencia preparada (el ID a buscar).
+            ps.setInt(1,id);
+
+            // Ejecutar la consulta SQL y obtener el resultado.
+            rs = ps.executeQuery();
+
+            // Verificar si se encontró algún registro.
+            if (rs.next()) {
+                cat.setCategoriaID(rs.getInt(1));       // Obtener el ID del usuario.
+                cat.setNombreCategoria(rs.getString(2));   // Obtener el nombre del usuario.
+                cat.setDescripcion(rs.getString(3));
+            } else {
+                // Si no se encontró ningún usuario con el ID especificado, establecer el objeto User a null.
+                cat = null;
+            }
+            ps.close(); // Cerrar la sentencia preparada para liberar recursos.
+            rs.close(); // Cerrar el conjunto de resultados para liberar recursos.
+        } catch (SQLException ex){
+            // Capturar cualquier excepción SQL que ocurra durante el proceso.
+            throw new SQLException("Error al obtener un usuario por id: " + ex.getMessage(), ex);
+        } finally {
+            // Bloque finally para asegurar que los recursos se liberen.
+            ps = null;         // Establecer la sentencia preparada a null.
+            rs = null;         // Establecer el conjunto de resultados a null.
+            conn.disconnect(); // Desconectar de la base de datos.
+        }
+        return cat;
+
+    }
+
     public Libro getById(int id) throws SQLException{
         Libro libro  = new Libro(); // Inicializar un objeto User que se retornará.
 

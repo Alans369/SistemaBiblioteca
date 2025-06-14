@@ -34,11 +34,18 @@ public class Mainform extends JFrame{
         menuBar.add(menuArchivo);
 
 
-        JMenuItem itemOpcion1 = new JMenuItem("Clientes");
+        JMenuItem itemOpcion1 = new JMenuItem("Crear");
         menuArchivo.add(itemOpcion1);
         itemOpcion1.addActionListener(s-> {
             libroformC clienteForm = new libroformC(this);
             clienteForm.setVisible(true);
+        });
+
+        JMenuItem itemOpcion2 = new JMenuItem("Actualizar");
+        menuArchivo.add(itemOpcion2);
+        itemOpcion2.addActionListener(s-> {
+            libroformU libroFormu = new libroformU(this);
+            libroFormu.setVisible(true);
         });
 
 

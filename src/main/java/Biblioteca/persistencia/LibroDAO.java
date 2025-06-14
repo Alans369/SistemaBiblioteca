@@ -159,7 +159,7 @@ public class LibroDAO {
         try{
             ps = conn.connect().prepareStatement(
                     "UPDATE Libros " +
-                            "SET Titulo = ?, Autor = ?, ImagenURL = ?, Descripcion = ?, RutaArchivoPDF = ? " +
+                            "SET Titulo = ?, Autor = ?, ImagenURL = ?, Descripcion = ?, RutaArchivoPDF = ?, CategoriaID = ?" +
                             "WHERE ID = ?"
             );
 
@@ -169,7 +169,8 @@ public class LibroDAO {
             ps.setString(3, libro.getImagenR());
             ps.setString(4, libro.getDescripcion());
             ps.setString(5, libro.getRutaPdf());
-            ps.setInt(6,libro.getId());
+            ps.setInt(6,libro.getCategoriaId());
+            ps.setInt(7,libro.getId());
 
             // Ejecutar la sentencia de actualización y verificar si se afectó alguna fila.
             if(ps.executeUpdate() > 0){

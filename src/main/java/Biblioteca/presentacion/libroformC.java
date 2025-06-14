@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 
 import Biblioteca.dominio.Libro;
 import Biblioteca.dominio.Categoria;
@@ -103,14 +104,11 @@ public class libroformC extends JDialog {
 
     } // Cierra solo el diálogo
 
-    public void CraerLibro() {
-
-
+    public void CraerLibro()  {
 
         try{
             Categoria categoriaSeleccionada = (Categoria) boxcategoria.getSelectedItem();
             int categoriaId = categoriaSeleccionada.getCategoriaID();
-
             Libro libro = new Libro();
             libro.setTitulo(txtTitulo.getText());
             libro.setAutor(txtautor.getText());
@@ -120,9 +118,13 @@ public class libroformC extends JDialog {
             libro.setCategoriaId(categoriaId);
             System.out.println(libro);
 
-        }catch (IOException ex) {
+            libroDAO.create(libro);
+
+        } catch (IOException ex) {
             JOptionPane.showMessageDialog(libroformC.this, "Error de I/O al guardar la imagen: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
 

@@ -56,6 +56,13 @@ public class Mainform extends JFrame{
             libroFormr.setVisible(true);
         });
 
+        JMenuItem itemOpcion4 = new JMenuItem("Catalogo");
+        menuArchivo.add(itemOpcion4);
+        itemOpcion4.addActionListener(s-> {
+            CatalogoForm catalogo = new CatalogoForm(this);
+            catalogo.setVisible(true);
+        });
+
 
 
         JMenuItem itemSalir = new JMenuItem("Salir");

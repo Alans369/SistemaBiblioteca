@@ -27,7 +27,10 @@
         <children>
           <component id="2d9d4" class="javax.swing.JTable" binding="table1" default-binding="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <showHorizontalLines value="true"/>
+              <showVerticalLines value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -46,7 +49,10 @@
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <showHorizontalLines value="true"/>
+          <showVerticalLines value="true"/>
+        </properties>
       </component>
       <component id="30c89" class="javax.swing.JButton" binding="button1" default-binding="true">
         <constraints>

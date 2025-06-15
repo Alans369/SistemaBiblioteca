@@ -33,6 +33,12 @@ public class Mainform extends JFrame{
         JMenu menuArchivo = new JMenu("Archivo");
         menuBar.add(menuArchivo);
 
+        JMenuItem itemOpcion0 = new JMenuItem("Login");
+        menuArchivo.add(itemOpcion0);
+        itemOpcion0.addActionListener(s-> {
+            //aca va tu ventana kevin
+        });
+
 
         JMenuItem itemOpcion1 = new JMenuItem("Crear");
         menuArchivo.add(itemOpcion1);

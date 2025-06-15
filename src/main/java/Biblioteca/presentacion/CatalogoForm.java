@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class CatalogoForm extends JDialog {
     private LibroDAO libroDAO;
     private JLabel textLabel;
     private Categoria cat1;
+    private Mainform mainFrameReference;
 
 
     private List<Libro> libros;
@@ -42,9 +44,11 @@ public class CatalogoForm extends JDialog {
         setSize(700, 700);
         setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.mainFrameReference = mainForm;
         add(Mainpanel);
         setupLibrosTable();
         cargarCategoriasEnComboBox();
+
         textField1.addKeyListener(new KeyAdapter() {
             // Sobrescribe el método keyReleased, que se llama cuando se suelta una tecla.
             @Override
@@ -456,26 +460,29 @@ public class CatalogoForm extends JDialog {
     private void mostrarInfoLibro(int row) {
         if (row >= 0 && row < libros.size()) {
             Libro libro = libros.get(row);
-            String info = String.format(
-                    "INFORMACIÓN DEL LIBRO\n\n" +
-                            "Título: %s\n" +
-                            "Autor: %s\n" +
-                            "Descripción: %s\n" +
-                            "Categoría ID: %d",
-                    libro.getTitulo(),
-                    libro.getAutor(),
-                    libro.getDescripcion(),
-                    libro.getCategoriaId()
-            );
-
-            JOptionPane.showMessageDialog(this, info, "Información del Libro",
-                    JOptionPane.INFORMATION_MESSAGE);
+            File pdfFile = new File(libro.getRutaPdf());
+            if (pdfFile.exists()) {
+                new PDFViewer(mainFrameReference,libro.getRutaPdf()).setVisible(true);
+            } else {
+                System.err.println("El archivo PDF no existe en la ruta: " + libro.getRutaPdf());
+                // Abrir sin PDF inicial
+                new PDFViewer(mainFrameReference,null).setVisible(true);
+            }
         }
     }
 
     private void mostrarDetalles(int row) {
         if (row >= 0 && row < libros.size()) {
             Libro libro = libros.get(row);
+
+            File pdfFile = new File(libro.getRutaPdf());
+            if (pdfFile.exists()) {
+                new PDFViewer(mainFrameReference,libro.getRutaPdf()).setVisible(true);
+            } else {
+                System.err.println("El archivo PDF no existe en la ruta: " + libro.getRutaPdf());
+                // Abrir sin PDF inicial
+                new PDFViewer(mainFrameReference,null).setVisible(true);
+            }
 
 
         }

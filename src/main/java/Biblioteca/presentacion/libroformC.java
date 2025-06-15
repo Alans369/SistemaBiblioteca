@@ -118,7 +118,11 @@ public class libroformC extends JDialog {
             libro.setCategoriaId(categoriaId);
             System.out.println(libro);
 
-            libroDAO.create(libro);
+
+
+            if (libroDAO.create(libro) != null) {
+                JOptionPane.showMessageDialog(libroformC.this, "Creado  correctamente: " , "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(libroformC.this, "Error de I/O al guardar la imagen: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

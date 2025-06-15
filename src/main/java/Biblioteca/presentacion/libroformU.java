@@ -173,17 +173,32 @@ public class libroformU extends JDialog {
             Categoria categoriaSeleccionada = (Categoria) boxcategoria.getSelectedItem();
             int categoriaId = categoriaSeleccionada.getCategoriaID();
 
-            libro.setTitulo(txtTitulo.getText());
-            libro.setAutor(txtautor.getText());
-            libro.setImagenR(copiarArchivo(rutaImagenTemporal,"images"));
-            libro.setDescripcion(txtdecripcion.getText());
-            libro.setRutaPdf(copiarArchivo(rutaPdfTemporal,"pdfs"));
+            libro.setTitulo(
+                    (txtTitulo.getText() == null || txtTitulo.getText().trim().isEmpty()) ? libro.getTitulo() : txtTitulo.getText());
+
+            libro.setAutor(
+                    (txtautor.getText() == null || txtautor.getText().trim().isEmpty()) ? libro.getAutor() : txtautor.getText()
+            );
+
+            libro.setImagenR(
+                    (rutaImagenTemporal == null || txtautor.getText().trim().isEmpty()) ? libro.getImagenR() : copiarArchivo(rutaImagenTemporal,"images")
+            );
+
+            libro.setDescripcion(
+                    (txtdecripcion.getText() == null || txtdecripcion.getText().trim().isEmpty()) ? libro.getDescripcion() : txtdecripcion.getText()
+            );
+
+            libro.setRutaPdf(
+                    (rutaPdfTemporal == null || rutaPdfTemporal.trim().isEmpty()) ? libro.getRutaPdf() : copiarArchivo(rutaPdfTemporal,"pdfs")
+            );
+
             libro.setCategoriaId(categoriaId);
             System.out.println(libro);
 
-           if (libroDA0.update(libro)) {
-               JOptionPane.showMessageDialog(libroformU.this, "Actualizado correctamente: " , "Error", JOptionPane.ERROR_MESSAGE);
-           }
+
+            if (libroDA0.update(libro)) {
+                JOptionPane.showMessageDialog(libroformU.this, "Actualizado correctamente: " , "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(libroformU.this, "Error de I/O al guardar la imagen: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

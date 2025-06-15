@@ -10,6 +10,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,17 +39,36 @@ public class libroformR extends JDialog{
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         add(mainpanel);
         this.mainFrameReference = mainForm;
+
+        textField1.addKeyListener(new KeyAdapter() {
+            // Sobrescribe el método keyReleased, que se llama cuando se suelta una tecla.
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // Verifica si el campo de texto txtNombre no está vacío.
+                if (!textField1.getText().trim().isEmpty()) {
+
+                    cargarDatosEjemplo(textField1.getText());
+                } else {
+                    // Si el campo de texto está vacío, crea un modelo de tabla vacío y lo asigna a la tabla de usuarios para limpiarla.
+                   System.out.println("vacio");
+                }
+            }
+        });
         // Inicializar lista de libros
         libros = new ArrayList<>();
 
         // Configurar la tabla
         setupLibrosTable();
 
-        // Cargar datos de ejemplo
         cargarDatosEjemplo();
+
+        // Cargar datos de ejemplo
+
 
         setVisible(true);
     }
+
+
 
     private void setupLibrosTable() {
         // Crear modelo no editable
@@ -150,11 +171,34 @@ public class libroformR extends JDialog{
         actualizarTabla();
     }
 
+    private void cargarDatosEjemplo(String titulo) {
+
+        libroDAO = new LibroDAO();
+        libros.clear();
+
+
+        try {
+
+            for (Libro libro : libroDAO.select(titulo)) {
+                libros.add(libro);
+            }
+
+
+        } catch (Exception ex) { // Captura SQLException o cualquier otra excepción del DAO
+            System.err.println("Error al cargar las categorías en el ComboBox: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Actualizar tabla
+        actualizarTabla();
+    }
+
     private void actualizarTabla() {
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
 
-        // Limpiar tabla
         model.setRowCount(0);
+
 
         // Agregar libros
         for (Libro libro : libros) {
@@ -290,9 +334,6 @@ public class libroformR extends JDialog{
             return super.stopCellEditing();
         }
     }
-
-
-
 
     /**
      * Método para cargar imagen del libro con imagen por defecto

@@ -398,6 +398,53 @@ public class LibroDAO {
 
     }
 
+    public ArrayList<Libro> searchByCategory(int id) throws SQLException {
+        ArrayList<Libro> records  = new ArrayList<>();
+
+        try {
+            // Preparar la sentencia SQL para buscar usuarios por nombre (usando LIKE para búsqueda parcial).
+            ps = conn.connect().prepareStatement("SELECT Titulo,Autor,ImagenURL,Descripcion,RutaArchivoPDF,CategoriaID " +
+                    "FROM Libros " +
+                    "WHERE CategoriaID = ?");
+
+            // Establecer el valor del parámetro en la sentencia preparada.
+            // El '%' al inicio y al final permiten la búsqueda de la cadena 'name' en cualquier parte del nombre del usuario.
+            ps.setInt(1, id);
+
+            // Ejecutar la consulta SQL y obtener el resultado.
+            rs = ps.executeQuery();
+
+            // Iterar a través de cada fila del resultado.
+            while (rs.next()){
+                // Crear un nuevo objeto User para cada registro encontrado.
+                Libro libro = new Libro();
+                // Asignar los valores de las columnas a los atributos del objeto User.
+                // Obtener el ID del usuario.
+                libro.setTitulo(rs.getString(1));   // Obtener el nombre del usuario.
+                libro.setAutor(rs.getString(2));  // Obtener el correo electrónico del usuario.
+                libro.setImagenR(rs.getString(3));
+                libro.setDescripcion((rs.getString(4)));
+                libro.setRutaPdf((rs.getString(5)));
+
+                libro.setCategoriaId(rs.getInt(6));
+                // Obtener el estado del usuario.
+                // Agregar el objeto User a la lista de resultados.
+                records.add(libro);
+            }
+            ps.close(); // Cerrar la sentencia preparada para liberar recursos.
+            rs.close(); // Cerrar el conjunto de resultados para liberar recursos.
+        }catch (SQLException ex){
+            // Capturar cualquier excepción SQL que ocurra durante el proceso.
+            throw new SQLException("Error al buscar usuarios: " + ex.getMessage(), ex);
+        } finally {
+            // Bloque finally para asegurar que los recursos se liberen.
+            ps = null;         // Establecer la sentencia preparada a null.
+            rs = null;         // Establecer el conjunto de resultados a null.
+            conn.disconnect(); // Desconectar de la base de datos.
+        }
+        return records; // Retornar la lista de usuarios encontrados
+    }
+
 
 
 

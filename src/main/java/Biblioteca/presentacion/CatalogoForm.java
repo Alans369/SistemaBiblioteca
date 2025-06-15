@@ -1,5 +1,6 @@
 package Biblioteca.presentacion;
 
+import Biblioteca.dominio.Categoria;
 import Biblioteca.dominio.Libro;
 import Biblioteca.persistencia.LibroDAO;
 
@@ -10,8 +11,11 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ public class CatalogoForm extends JDialog {
 
     private LibroDAO libroDAO;
     private JLabel textLabel;
+    private Categoria cat1;
 
 
     private List<Libro> libros;
@@ -39,8 +44,39 @@ public class CatalogoForm extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         add(Mainpanel);
         setupLibrosTable();
+        cargarCategoriasEnComboBox();
+        textField1.addKeyListener(new KeyAdapter() {
+            // Sobrescribe el método keyReleased, que se llama cuando se suelta una tecla.
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // Verifica si el campo de texto txtNombre no está vacío.
+                if (!textField1.getText().trim().isEmpty()) {
+
+                    cargarDatosEjemplo(textField1.getText());
+                } else {
+                    // Si el campo de texto está vacío, crea un modelo de tabla vacío y lo asigna a la tabla de usuarios para limpiarla.
+                    System.out.println("vacio");
+                }
+            }
+        });
         libros = new ArrayList<>();
-        cargarDatosEjemplo();
+
+        comboBox2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Este código se ejecutará cada vez que el usuario cambie la selección
+                // y la acción sea "finalizada" (ej. al soltar el clic después de elegir)
+
+                // Obtener el ítem seleccionado
+                Categoria categoriaSeleccionada = (Categoria) comboBox2.getSelectedItem();
+                int categoriaId = categoriaSeleccionada.getCategoriaID();
+                cargarDatosEjemplo(categoriaId);
+                // Aquí puedes poner la lógica que quieres ejecutar
+                // por ejemplo, filtrar la tabla, cargar nuevos datos, etc.
+                // Ejemplo: filtrarTablaPorCategoria(selectedItem);
+            }
+        });
+
     }
 
 
@@ -126,21 +162,80 @@ public class CatalogoForm extends JDialog {
         });
     }
 
+    private void cargarCategoriasEnComboBox() {
+        // Limpiar el ComboBox antes de añadir nuevos ítems
+        libroDAO = new LibroDAO();
+
+        try {
+            // Suponiendo que tienes una instancia de tu clase de persistencia (ej. CategoriaDAO)
+            // Necesitas instanciar tu CategoriaDAO aquí
+            // Por ejemplo:
+            // CategoriaDAO categoriaDAO = new CategoriaDAO();
+            // ArrayList<Categoria> categorias = categoriaDAO.selectCategoria();
+
+            // Para este ejemplo, simulemos algunas categorías si no tienes el DAO configurado aún
+
+            // Añadir los objetos Categoria al JComboBox
+            for (Categoria cat : libroDAO.selectCategoria()) {
+                comboBox2.addItem(cat);
+            }
 
 
-    private void cargarDatosEjemplo() {
+        } catch (Exception ex) { // Captura SQLException o cualquier otra excepción del DAO
+            System.err.println("Error al cargar las categorías en el ComboBox: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-        // Crear libros de ejemplo con rutas reales de tu proyecto
-        libros.add(new Libro(0,"El Quijote", "Miguel de Cervantes",
-                "/images/Lighthouse_1749863529822.jpg", "La obra cumbre de la literatura española... gdfd fdfdfdf dfd fdfdfdf df dfd fdfd fdf",
-                "/pdfs/quijote.pdf", 1));
 
 
+    private void cargarDatosEjemplo(String titulo) {
 
+        libroDAO = new LibroDAO();
+        libros.clear();
+
+
+        try {
+
+            for (Libro libro : libroDAO.select(titulo)) {
+                libros.add(libro);
+            }
+
+
+        } catch (Exception ex) { // Captura SQLException o cualquier otra excepción del DAO
+            System.err.println("Error al cargar las categorías en el ComboBox: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
         // Actualizar tabla
         actualizarTabla();
     }
+
+    private void cargarDatosEjemplo(int categoryId) {
+
+        libroDAO = new LibroDAO();
+        libros.clear();
+
+
+        try {
+
+            for (Libro libro : libroDAO.searchByCategory(categoryId)) {
+                libros.add(libro);
+            }
+
+
+        } catch (Exception ex) { // Captura SQLException o cualquier otra excepción del DAO
+            System.err.println("Error al cargar las categorías en el ComboBox: " + ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Actualizar tabla
+        actualizarTabla();
+    }
+
 
     private void actualizarTabla() {
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
@@ -155,6 +250,12 @@ public class CatalogoForm extends JDialog {
             // Cargar imagen del libro o imagen por defecto
             ImageIcon imagenLibro = cargarImagenLibro(libro.getImagenR());
 
+            try {
+                cat1 = libroDAO.getByIdC(libro.getCategoriaId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
             Object[] imagenConTexto = new Object[]{
                     libro.getTitulo(), // El texto que aparecerá encima de la imagen
                     imagenLibro
@@ -163,7 +264,7 @@ public class CatalogoForm extends JDialog {
             model.addRow(new Object[]{
                     imagenConTexto, // Ahora es un ImageIcon en lugar de String
                     libro.getDescripcion(),
-                    libro.getCategoriaId(),
+                    cat1.getNombreCategoria(),
                     "Detalles",
 
             });
@@ -205,10 +306,7 @@ public class CatalogoForm extends JDialog {
         }
     }
 
-    /**
-     * Método para cargar imágenes desde resources con redimensionamiento
 
-     */
 
     private ImageIcon loadImageIcon(String path, int width, int height) {
         try {

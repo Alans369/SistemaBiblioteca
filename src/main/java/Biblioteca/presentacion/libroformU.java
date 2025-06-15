@@ -39,14 +39,14 @@ public class libroformU extends JDialog {
     private Libro librotemporal ;
 
 
-    public libroformU(Mainform mainForm)  {
+    public libroformU(Mainform mainForm,int libroid)  {
         super(mainForm, "Actualizar Libro ", true); // true para modal
         setSize(700, 700);
         setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         libroDA0 = new LibroDAO();
         try {
-           Libro libro = libroDA0.getById(39);
+           Libro libro = libroDA0.getById(libroid);
 
            librotemporal = libro;
             txtTitulo.setText(libro.getTitulo());

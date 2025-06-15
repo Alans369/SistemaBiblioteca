@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class libroformR extends JFrame{
+public class libroformR extends JDialog{
     private JButton crearLibroButton;
     private JTextField textField1;
     private JComboBox comboBox1;
@@ -25,17 +25,18 @@ public class libroformR extends JFrame{
     private JPanel mainpanel;
     private JTable table1;
     private LibroDAO libroDAO;
+    private Mainform mainFrameReference;
 
     // Lista para almacenar los objetos Libro
     private List<Libro> libros;
 
-    public libroformR() {
-        setTitle("Gestión de Libros - Biblioteca");
-        setContentPane(mainpanel);
-        setSize(700, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
+    public libroformR(Mainform mainForm) {
+        super(mainForm, "Actualizar Libro ", true); // true para modal
+        setSize(700, 700);
+        setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        add(mainpanel);
+        this.mainFrameReference = mainForm;
         // Inicializar lista de libros
         libros = new ArrayList<>();
 
@@ -194,23 +195,8 @@ public class libroformR extends JFrame{
         if (row >= 0 && row < libros.size()) {
             Libro libro = libros.get(row);
 
-            // Aquí puedes abrir una ventana de detalles o mostrar más información
-            String detalles = String.format(
-                    "DETALLES COMPLETOS\n\n" +
-                            "Título: %s\n" +
-                            "Autor: %s\n" +
-                            "URL Imagen: %s\n" +
-                            "Descripción: %s\n" ,
-
-                    libro.getTitulo(),
-                    libro.getAutor(),
-                    libro.getImagenR(),
-                    libro.getDescripcion()
-
-            );
-
-            JOptionPane.showMessageDialog(this, detalles, "Detalles del Libro",
-                    JOptionPane.INFORMATION_MESSAGE);
+            libroformU libroFormu = new libroformU(mainFrameReference,libro.getId());
+            libroFormu.setVisible(true);
         }
     }
 
@@ -240,7 +226,6 @@ public class libroformR extends JFrame{
         public ButtonRenderer(String text) {
             setOpaque(true);
             setText(text);
-
         }
 
         @Override
@@ -423,9 +408,5 @@ public class libroformR extends JFrame{
         return new ImageIcon(img);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new libroformR();
-        });
-    }
+
 }

@@ -53,8 +53,8 @@ public class PDFViewer extends JDialog {
         JButton openButton = new JButton("Abrir PDF");
         JButton zoomInButton = new JButton("Zoom +");
         JButton zoomOutButton = new JButton("Zoom -");
-        JButton prevButton = new JButton("Página Anterior");
-        JButton nextButton = new JButton("Página Siguiente");
+        JButton prevButton = new JButton("<<<<<<<<<");
+        JButton nextButton = new JButton(">>>>>>>>>");
         JButton closeButton = new JButton("Cerrar");
 
         buttonPanel.add(openButton);

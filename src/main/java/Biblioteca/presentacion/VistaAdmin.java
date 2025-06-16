@@ -4,19 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class VistaAdmin extends JDialog {
+public class VistaAdmin extends JFrame {
     private JButton botonLibros;
     private JButton btnCerrar;
     private Mainform father;
 
     // Constructor que recibe el frame padre
-    public VistaAdmin(Mainform parent) {
-        super(parent, "Gestión de Libros", true); // true = modal
+    public VistaAdmin() {
         initComponents();
         setupLayout();
         setupEvents();
         configureDialog();
-        this.father = parent;
+
     }
 
     // Inicializar componentes
@@ -94,7 +93,7 @@ public class VistaAdmin extends JDialog {
 
     // Método que maneja el evento del botón Libros
     private void onLibrosButtonClick(ActionEvent e) {
-        libroformR libroFormr = new libroformR(father);
+        libroformR libroFormr = new libroformR(new Mainform());
         libroFormr.setVisible(true);
     }
 

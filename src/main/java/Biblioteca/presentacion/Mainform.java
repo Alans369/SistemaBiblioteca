@@ -1,0 +1,75 @@
+package Biblioteca.presentacion;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class Mainform extends JFrame{
+    private JPanel Mainpanel;
+
+    public Mainform() {
+        setTitle("Sistema en java de escritorio"); // Establece el título de la ventana principal (JFrame).
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configura la operación por defecto al cerrar la ventana para que la aplicación se termine.
+        setLocationRelativeTo(null); // Centra la ventana principal en la pantalla.
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setContentPane(Mainpanel);
+        setVisible(true);// Inicializa la ventana principal en estado maximizado, ocupando toda la pantalla.
+        crearMenu();
+    }
+
+    public static void main(String[] args) {
+        // Ejecutar la GUI en el Event Dispatch Thread (EDT)
+        SwingUtilities.invokeLater(() -> {
+            new Mainform();
+        });
+    }
+
+    private void crearMenu(){
+        // 1. Crear la barra de menú
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+
+
+        // 2. Crear los menús principales
+        JMenu menuArchivo = new JMenu("Archivo");
+        menuBar.add(menuArchivo);
+
+        JMenuItem itemOpcion0 = new JMenuItem("Login");
+        menuArchivo.add(itemOpcion0);
+        itemOpcion0.addActionListener(s-> {
+            //aca va tu ventana kevin
+        });
+
+
+
+
+
+
+        JMenuItem itemOpcion3 = new JMenuItem("Vista Admin");
+        menuArchivo.add(itemOpcion3);
+        itemOpcion3.addActionListener(s-> {
+            VistaAdmin libroFormr = new VistaAdmin(this);
+            libroFormr.setVisible(true);
+        });
+
+        JMenuItem itemOpcion4 = new JMenuItem("Vista de usuario");
+        menuArchivo.add(itemOpcion4);
+        itemOpcion4.addActionListener(s-> {
+            VistaDeUsuario catalogo = new VistaDeUsuario(this);
+            catalogo.setVisible(true);
+        });
+
+
+
+        JMenuItem itemSalir = new JMenuItem("Salir");
+        menuArchivo.add(itemSalir);
+        itemSalir.addActionListener(s-> System.exit(0));
+
+
+
+
+
+
+    }
+
+
+}

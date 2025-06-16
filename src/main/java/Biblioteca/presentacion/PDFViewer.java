@@ -50,14 +50,14 @@ public class PDFViewer extends JDialog {
         // Panel de botones
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        JButton openButton = new JButton("Abrir PDF");
+
         JButton zoomInButton = new JButton("Zoom +");
         JButton zoomOutButton = new JButton("Zoom -");
         JButton prevButton = new JButton("<<<<<<<<<");
         JButton nextButton = new JButton(">>>>>>>>>");
         JButton closeButton = new JButton("Cerrar");
 
-        buttonPanel.add(openButton);
+
         buttonPanel.add(zoomInButton);
         buttonPanel.add(zoomOutButton);
         buttonPanel.add(prevButton);
@@ -74,7 +74,7 @@ public class PDFViewer extends JDialog {
         add(scrollPane, BorderLayout.CENTER);
 
         // Event listeners
-        openButton.addActionListener(e -> openPDF());
+
         zoomInButton.addActionListener(e -> zoom(1.2f));
         zoomOutButton.addActionListener(e -> zoom(0.8f));
         prevButton.addActionListener(e -> previousPage());

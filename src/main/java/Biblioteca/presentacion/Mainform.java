@@ -44,19 +44,8 @@ public class Mainform extends JFrame{
 
 
 
-        JMenuItem itemOpcion3 = new JMenuItem("Vista Admin");
-        menuArchivo.add(itemOpcion3);
-        itemOpcion3.addActionListener(s-> {
-            VistaAdmin libroFormr = new VistaAdmin(this);
-            libroFormr.setVisible(true);
-        });
 
-        JMenuItem itemOpcion4 = new JMenuItem("Vista de usuario");
-        menuArchivo.add(itemOpcion4);
-        itemOpcion4.addActionListener(s-> {
-            VistaDeUsuario catalogo = new VistaDeUsuario(this);
-            catalogo.setVisible(true);
-        });
+
 
 
 

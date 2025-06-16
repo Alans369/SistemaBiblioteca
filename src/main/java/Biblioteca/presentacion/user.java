@@ -8,11 +8,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map; // Para el tipo de retorno de UserDAO
+import java.util.Objects;
 
 public class user {
     public JPanel panelMain;
     private JLabel etiquetausuario;
-    private JTextField userfield;
+    public JTextField userfield;
     private JLabel labelpass;
     private JPasswordField passfield;
     private JButton logginbutton;
@@ -33,6 +34,8 @@ public class user {
             public void actionPerformed(ActionEvent e) {
                 String username = userfield.getText();
                 String enteredPassword = new String(passfield.getPassword());
+
+
 
                 if (username.isEmpty() || enteredPassword.isEmpty()) {
                     JOptionPane.showMessageDialog(panelMain, "Por favor completa todos los campos.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
@@ -64,10 +67,7 @@ public class user {
                 // Verifica que se encontró un usuario y que la contraseña hash no es nula,
                 // y luego compara las contraseñas.
                 if (usuarioLogueadoData != null && hashedPasswordFromDB != null && BCrypt.checkpw(enteredPassword, hashedPasswordFromDB)) {
-                    JOptionPane.showMessageDialog(panelMain,
-                            "¡Inicio de sesión exitoso, " + username + "!",
-                            "Acceso Concedido",
-                            JOptionPane.INFORMATION_MESSAGE);
+
 
                     // Cierra la ventana actual de login
                     ((JFrame) SwingUtilities.getWindowAncestor(panelMain)).dispose();
@@ -84,10 +84,24 @@ public class user {
                         return;
                     }
 
-                    // Pasa el ID y el ROL del objeto Usuario a VistaEjemplo!
-                    // La llamada a .intValue() ahora es segura porque loggedInUserId no es nulo.
-                    VistaEjemplo exampleView = new VistaEjemplo(loggedInUserId.intValue(), loggedInUserRole);
-                    exampleView.setVisible(true);
+
+                    if (Objects.equals(userfield.getText(), "admin")){
+
+                        System.out.println(username);
+                        new VistaAdmin().setVisible(true);
+
+
+                    }else {
+                        new VistaDeUsuario().setVisible(true);
+
+                    }
+
+
+
+
+
+
+
 
                 } else {
                     JOptionPane.showMessageDialog(panelMain,
@@ -95,6 +109,8 @@ public class user {
                             "Acceso Denegado",
                             JOptionPane.ERROR_MESSAGE);
                 }
+
+
             }
         });
 

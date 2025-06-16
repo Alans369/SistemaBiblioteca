@@ -5,19 +5,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class VistaDeUsuario extends JDialog {
+public class VistaDeUsuario extends JFrame{
     private JButton botonLibros;
     private JButton btnCerrar;
     private Mainform father;
 
     // Constructor que recibe el frame padre
-    public VistaDeUsuario(Mainform parent) {
-        super(parent, "Gestión de Libros", true); // true = modal
+    public VistaDeUsuario() {
+         // true = modal
         initComponents();
         setupLayout();
         setupEvents();
         configureDialog();
-        this.father = parent;
+
     }
 
     // Inicializar componentes
@@ -95,7 +95,7 @@ public class VistaDeUsuario extends JDialog {
 
     // Método que maneja el evento del botón Libros
     private void onLibrosButtonClick(ActionEvent e) {
-        CatalogoForm libroFormr = new CatalogoForm(father);
+        CatalogoForm libroFormr = new CatalogoForm(new Mainform());
         libroFormr.setVisible(true);
     }
 

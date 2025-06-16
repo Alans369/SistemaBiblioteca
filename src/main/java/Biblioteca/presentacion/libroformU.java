@@ -197,7 +197,7 @@ public class libroformU extends JDialog {
 
 
             if (libroDA0.update(libro)) {
-                JOptionPane.showMessageDialog(libroformU.this, "Actualizado correctamente: " , "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(libroformU.this, "Actualizado correctamente: " , "Error", JOptionPane.INFORMATION_MESSAGE);
             }
 
         } catch (IOException ex) {

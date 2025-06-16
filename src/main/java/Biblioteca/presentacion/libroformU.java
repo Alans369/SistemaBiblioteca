@@ -100,7 +100,7 @@ public class libroformU extends JDialog {
                     try {
                         // Muestra la imagen seleccionada en el JLabel para vista previa
                         mostrarImagenEnLabel(rutaImagenTemporal);
-                        JOptionPane.showMessageDialog(libroformU.this, "Imagen seleccionada para vista previa.");
+                        //JOptionPane.showMessageDialog(libroformU.this, "Imagen seleccionada para vista previa.");
                     } catch (Exception ex) { // Captura cualquier excepción al cargar la imagen para vista previa
                         JOptionPane.showMessageDialog(libroformU.this, "Error al mostrar la imagen de vista previa: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
@@ -129,7 +129,7 @@ public class libroformU extends JDialog {
                     rutaPdfTemporal = tempPath; // Guarda la ruta temporal del PDF
                     File pdfFile = new File(rutaPdfTemporal);
                     button1.setText("PDF Seleccionado: " + pdfFile.getName()); // Muestra solo el nombre
-                    JOptionPane.showMessageDialog(libroformU.this, "PDF seleccionado temporalmente: " + pdfFile.getName());
+                    //JOptionPane.showMessageDialog(libroformU.this, "PDF seleccionado temporalmente: " + pdfFile.getName());
                 } else {
                     rutaPdfTemporal = null; // Si el usuario cancela, limpia la ruta
                     button1.setText("PDF Seleccionado: Ninguno"); // Restablece el texto

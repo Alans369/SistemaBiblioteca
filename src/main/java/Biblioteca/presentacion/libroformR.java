@@ -13,21 +13,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class libroformR extends JDialog{
     private JButton crearLibroButton;
     private JTextField textField1;
-    private JComboBox comboBox1;
     private JScrollPane table;
-    private JList list1;
-    private JTable table2;
     private JPanel mainpanel;
     private JTable table1;
+    private JButton button2;
     private LibroDAO libroDAO;
     private Mainform mainFrameReference;
+    private Categoria cat;
 
     // Lista para almacenar los objetos Libro
     private List<Libro> libros;
@@ -56,6 +57,12 @@ public class libroformR extends JDialog{
         });
         // Inicializar lista de libros
         libros = new ArrayList<>();
+
+        crearLibroButton.addActionListener(e->
+        {libroformC libroFormu = new libroformC(mainFrameReference);
+        libroFormu.setVisible(true);
+        }
+        );
 
         // Configurar la tabla
         setupLibrosTable();
@@ -99,9 +106,9 @@ public class libroformR extends JDialog{
         // Añadir columnas basadas en tu estructura de BD
         model.addColumn("Título");
         model.addColumn("Imagen");
-        model.addColumn("Ruta Archivo PDF");
-        model.addColumn("Categoría ID");
-        model.addColumn("Detalles");
+        model.addColumn("Archivo PDF");
+        model.addColumn("Categoría ");
+        model.addColumn("Editar");
         model.addColumn("Borrar");
 
         // Configurar altura de filas para mostrar imágenes
@@ -111,11 +118,11 @@ public class libroformR extends JDialog{
         table1.getColumn("Imagen").setCellRenderer(new ImageRenderer());
 
         // Configurar renderizadores y editores para botones
-        table1.getColumn("Detalles").setCellRenderer(new ButtonRenderer("Detalles"));
-        table1.getColumn("Detalles").setCellEditor(new ButtonEditor(new JCheckBox(), "Detalles"));
+        table1.getColumn("Editar").setCellRenderer(new ButtonRenderer("✏️"));
+        table1.getColumn("Editar").setCellEditor(new ButtonEditor(new JCheckBox(), "✏️"));
 
-        table1.getColumn("Borrar").setCellRenderer(new ButtonRenderer("Borrar"));
-        table1.getColumn("Borrar").setCellEditor(new ButtonEditor(new JCheckBox(), "Borrar"));
+        table1.getColumn("Borrar").setCellRenderer(new ButtonRenderer("🗑️"));
+        table1.getColumn("Borrar").setCellEditor(new ButtonEditor(new JCheckBox(), "🗑️"));
 
         // Ajustar anchos de columnas
         table1.getColumnModel().getColumn(0).setPreferredWidth(50); // Título
@@ -203,14 +210,33 @@ public class libroformR extends JDialog{
         // Agregar libros
         for (Libro libro : libros) {
             // Cargar imagen del libro o imagen por defecto
+
+
+            libroDAO = new LibroDAO();
+
+            try {
+                cat  = libroDAO.getByIdC(libro.getCategoriaId());
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            String rutaCompletaPdf = libro.getRutaPdf();
+
+
+            File archivoPdf = new File(rutaCompletaPdf);
+
+
+            String nombrePdf = archivoPdf.getName();
+
             ImageIcon imagenLibro = cargarImagenLibro(libro.getImagenR());
             model.addRow(new Object[]{
                     libro.getTitulo(),
                     imagenLibro, // Ahora es un ImageIcon en lugar de String
-                    libro.getRutaPdf(),
-                    libro.getCategoriaId(),
-                    "Detalles",
-                    "Borrar"
+                    nombrePdf,
+                    cat,
+                    "✏️",
+                    "🗑️",
             });
         }
     }
@@ -257,10 +283,17 @@ public class libroformR extends JDialog{
             );
 
             if (respuesta == JOptionPane.YES_OPTION) {
-                libros.remove(row);
-                actualizarTabla();
-                JOptionPane.showMessageDialog(this, "Libro eliminado correctamente.",
-                        "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                   if( libroDAO.delete(libro)){
+                       libros.remove(row);
+                       actualizarTabla();
+                       JOptionPane.showMessageDialog(this, "Libro eliminado '"+libro.getTitulo()+"' correctamente.",
+                               "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
+                   }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
     }
@@ -318,9 +351,9 @@ public class libroformR extends JDialog{
         @Override
         public Object getCellEditorValue() {
             if (isPushed) {
-                if (label.equals("Detalles")) {
+                if (label.equals("✏️")) {
                     mostrarDetalles(currentRow);
-                } else if (label.equals("Borrar")) {
+                } else if (label.equals("🗑️")) {
                     borrarLibro(currentRow);
                 }
             }

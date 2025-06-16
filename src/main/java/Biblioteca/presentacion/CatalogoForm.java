@@ -6,6 +6,7 @@ import Biblioteca.persistencia.LibroDAO;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -14,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,26 +27,28 @@ public class CatalogoForm extends JDialog {
     private JPanel Mainpanel;
     private JTable table1;
     private JTextField textField1;
-    private JTable table2;
     private JButton button1;
     private JComboBox comboBox2;
 
     private LibroDAO libroDAO;
     private JLabel textLabel;
     private Categoria cat1;
+    private Mainform mainFrameReference;
 
 
     private List<Libro> libros;
 
 
     public CatalogoForm(Mainform mainForm){
-        super(mainForm, "Actualizar Libro ", true); // true para modal
+        super(mainForm, "Buscar Libro ", true); // true para modal
         setSize(700, 700);
         setLocationRelativeTo(mainForm); // Centra el diálogo respecto a su propietario
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.mainFrameReference = mainForm;
         add(Mainpanel);
         setupLibrosTable();
         cargarCategoriasEnComboBox();
+
         textField1.addKeyListener(new KeyAdapter() {
             // Sobrescribe el método keyReleased, que se llama cuando se suelta una tecla.
             @Override
@@ -57,9 +61,15 @@ public class CatalogoForm extends JDialog {
                     // Si el campo de texto está vacío, crea un modelo de tabla vacío y lo asigna a la tabla de usuarios para limpiarla.
                     System.out.println("vacio");
                 }
+                System.out.println();
             }
         });
         libros = new ArrayList<>();
+
+        button1.addActionListener(e->System.exit(0));
+
+
+
 
         comboBox2.addActionListener(new ActionListener() {
             @Override
@@ -86,7 +96,7 @@ public class CatalogoForm extends JDialog {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Solo las columnas de botones son "editables" (clickeables)
-                return column == 3 || column == 4; // Columnas de Detalles y Borrar
+                return column == 2 || column == 3; // Columnas de Detalles y Borrar
             }
 
             @Override
@@ -94,8 +104,8 @@ public class CatalogoForm extends JDialog {
                 switch (column) {
                     case 0: // Columna de imagen
                         return ImageIcon.class;
+                    case 2:
                     case 3:
-                    case 4:
                         return JButton.class;
                     default:
                         return String.class;
@@ -108,25 +118,33 @@ public class CatalogoForm extends JDialog {
 
         // Añadir columnas basadas en tu estructura de BD
 
-        model.addColumn("Imagen");
-        model.addColumn("Ruta Archivo PDF");
-        model.addColumn("Categoría ID");
-        model.addColumn("Detalles");
+        model.addColumn("Libro");
+        model.addColumn("----------------------");
+        model.addColumn("Categoría");
+       // model.addColumn("⛽");
 
 
         // Configurar altura de filas para mostrar imágenes
         table1.setRowHeight(120);
 
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+
+
 
 
         // Configurar renderizador para imágenes
-        table1.getColumn("Imagen").setCellRenderer(new ImageTextCellRenderer()); // Usa tu nuevo renderizador aquí
-        table1.getColumn("Ruta Archivo PDF").setCellRenderer(new MultiLineTextCellRenderer());
+        table1.getColumn("Libro").setCellRenderer(new ImageTextCellRenderer()); // Usa tu nuevo renderizador aquí
+        table1.getColumn("----------------------").setCellRenderer(new MultiLineTextCellRenderer());
+        table1.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+
+
 
 
         // Configurar renderizadores y editores para botones
-        table1.getColumn("Detalles").setCellRenderer(new CatalogoForm.ButtonRenderer("Detalles"));
-        table1.getColumn("Detalles").setCellEditor(new CatalogoForm.ButtonEditor(new JCheckBox(), "Detalles"));
+        //table1.getColumn("⛽").setCellRenderer(new CatalogoForm.ButtonRenderer("Detalles"));
+        //table1.getColumn("⛽").setCellEditor(new CatalogoForm.ButtonEditor(new JCheckBox(), "Detalles"));
 
 
 
@@ -134,8 +152,8 @@ public class CatalogoForm extends JDialog {
 
         table1.getColumnModel().getColumn(0).setPreferredWidth(120); // Imagen
         table1.getColumnModel().getColumn(1).setPreferredWidth(300); // PDF
-        table1.getColumnModel().getColumn(2).setPreferredWidth(50);  // Categoría
-        table1.getColumnModel().getColumn(3).setPreferredWidth(100);  // Detalles
+        table1.getColumnModel().getColumn(2).setPreferredWidth(100);  // Categoría
+
 
 
         // Configurar selección
@@ -265,7 +283,7 @@ public class CatalogoForm extends JDialog {
                     imagenConTexto, // Ahora es un ImageIcon en lugar de String
                     libro.getDescripcion(),
                     cat1.getNombreCategoria(),
-                    "Detalles",
+
 
             });
         }
@@ -456,26 +474,29 @@ public class CatalogoForm extends JDialog {
     private void mostrarInfoLibro(int row) {
         if (row >= 0 && row < libros.size()) {
             Libro libro = libros.get(row);
-            String info = String.format(
-                    "INFORMACIÓN DEL LIBRO\n\n" +
-                            "Título: %s\n" +
-                            "Autor: %s\n" +
-                            "Descripción: %s\n" +
-                            "Categoría ID: %d",
-                    libro.getTitulo(),
-                    libro.getAutor(),
-                    libro.getDescripcion(),
-                    libro.getCategoriaId()
-            );
-
-            JOptionPane.showMessageDialog(this, info, "Información del Libro",
-                    JOptionPane.INFORMATION_MESSAGE);
+            File pdfFile = new File(libro.getRutaPdf());
+            if (pdfFile.exists()) {
+                new PDFViewer(mainFrameReference,libro.getRutaPdf()).setVisible(true);
+            } else {
+                System.err.println("El archivo PDF no existe en la ruta: " + libro.getRutaPdf());
+                // Abrir sin PDF inicial
+                new PDFViewer(mainFrameReference,null).setVisible(true);
+            }
         }
     }
 
     private void mostrarDetalles(int row) {
         if (row >= 0 && row < libros.size()) {
             Libro libro = libros.get(row);
+
+            File pdfFile = new File(libro.getRutaPdf());
+            if (pdfFile.exists()) {
+                new PDFViewer(mainFrameReference,libro.getRutaPdf()).setVisible(true);
+            } else {
+                System.err.println("El archivo PDF no existe en la ruta: " + libro.getRutaPdf());
+                // Abrir sin PDF inicial
+                new PDFViewer(mainFrameReference,null).setVisible(true);
+            }
 
 
         }
@@ -515,7 +536,7 @@ public class CatalogoForm extends JDialog {
 
             combinedLabel = new JLabel();
             combinedLabel.setHorizontalAlignment(JLabel.CENTER); // Centrar horizontalmente el contenido
-            combinedLabel.setVerticalTextPosition(JLabel.TOP);    // Texto arriba del icono
+            combinedLabel.setVerticalTextPosition(JLabel.BOTTOM);    // Texto arriba del icono
             combinedLabel.setHorizontalTextPosition(JLabel.CENTER); // Centrar el texto con respecto al icono
 
             add(combinedLabel, BorderLayout.CENTER);

@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="Mainpanel" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="50" bottom="0" right="50"/>
     <constraints>
-      <xy x="20" y="20" width="692" height="400"/>
+      <xy x="20" y="20" width="919" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -22,12 +22,18 @@
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-16144713"/>
+          <foreground color="-16144713"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="2d9d4" class="javax.swing.JTable" binding="table1" default-binding="true">
             <constraints/>
             <properties>
+              <autoCreateColumnsFromModel value="true"/>
+              <autoResizeMode value="4"/>
+              <fillsViewportHeight value="true"/>
               <showHorizontalLines value="true"/>
               <showVerticalLines value="false"/>
             </properties>
@@ -43,23 +49,12 @@
         </constraints>
         <properties/>
       </component>
-      <component id="7bb67" class="javax.swing.JTable" binding="table2" default-binding="true">
-        <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties>
-          <showHorizontalLines value="true"/>
-          <showVerticalLines value="true"/>
-        </properties>
-      </component>
       <component id="30c89" class="javax.swing.JButton" binding="button1" default-binding="true">
         <constraints>
           <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <text value="&gt;&gt;&gt;&gt;&gt;"/>
         </properties>
       </component>
       <component id="2ab2" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">

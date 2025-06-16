@@ -155,9 +155,7 @@ public class libroformR extends JDialog{
     private void cargarDatosEjemplo() {
 
         // Crear libros de ejemplo con rutas reales de tu proyecto
-        libros.add(new Libro(0,"El Quijote", "Miguel de Cervantes",
-                "/images/Lighthouse_1749863529822.jpg", "La obra cumbre de la literatura española...",
-                "/pdfs/quijote.pdf", 1));
+
 
         libroDAO = new LibroDAO();
 

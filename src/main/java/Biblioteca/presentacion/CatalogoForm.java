@@ -61,6 +61,7 @@ public class CatalogoForm extends JDialog {
                     // Si el campo de texto está vacío, crea un modelo de tabla vacío y lo asigna a la tabla de usuarios para limpiarla.
                     System.out.println("vacio");
                 }
+                System.out.println();
             }
         });
         libros = new ArrayList<>();
